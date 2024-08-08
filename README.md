@@ -17,9 +17,10 @@ Program yang dibuat adalah sebuah monolith website penyedia berbagai film.
 
 ### Technology Stack
 Tech stack yang digunakan dalam seleksi 3 Labpro adalah sebagai berikut:
-1. Bahasa pemrograman: TypeScript
-2. Framework: NestJs 
-3. Database: -
+1. TypeScript
+2. NestJs 
+3. Docker 25.0.3
+4. Passport 
 
 ### List Endpoint
 

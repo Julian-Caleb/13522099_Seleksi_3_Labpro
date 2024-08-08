@@ -1,7 +1,11 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { FilmModule } from './film/film.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [],
+  imports: [ConfigModule.forRoot({isGlobal: true}), AuthModule, UserModule, FilmModule, PrismaModule],
 })
 export class AppModule {}
