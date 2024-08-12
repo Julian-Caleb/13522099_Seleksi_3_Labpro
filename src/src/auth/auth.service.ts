@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
@@ -13,7 +13,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const { email, password, username } = registerDto;
+    const { email, password, username, firstName, lastName } = registerDto;
     const hashedPassword = await argon2.hash(password);
 
     const user = await this.prisma.user.create({
@@ -21,11 +21,23 @@ export class AuthService {
         email,
         password: hashedPassword,
         username,
+        firstName,
+        lastName,
         balance: 0,
       },
     });
 
-    return this.generateToken(user);
+    const token = this.generateToken(user);
+
+    return {
+      status: 'success',
+      message: 'Login successful',
+      data: {
+        username: user.username,
+        token: token.access_token,
+      },
+    };
+
   }
 
   async login(loginDto: LoginDto) {
@@ -33,10 +45,24 @@ export class AuthService {
 
     const user = await this.prisma.user.findUnique({ where: { username } });
     if (!user || !(await argon2.verify(user.password, password))) {
-      throw new UnauthorizedException('Invalid credentials');
+      // console.log("Failed");
+      return {
+        status: 'error',
+        message: 'Login failed',
+        data: null,
+      }
+    } else {
+      const token = this.generateToken(user);
+      // console.log("Success");
+      return {
+        status: 'success',
+        message: 'Login successful',
+        data: {
+          username: user.username,
+          token: token.access_token,
+        },
+      };
     }
-
-    return this.generateToken(user);
   }
 
   private generateToken(user: any) {

@@ -14,15 +14,19 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  username String  @unique
-  password String
-  balance  Int
+  id        String  @id @default(uuid())
+  email     String  @unique
+  username  String  @unique
+  firstName String
+  lastName  String
+  password  String
+  balance   Int
+
+  films     FilmOnUser[]
 }
 
-model Film { 
-  id              String   @id @default(uuid())
+model Film {
+  id              String        @id @default(uuid())
   title           String
   description     String
   director        String
@@ -32,6 +36,17 @@ model Film {
   duration        Int
   video_url       String
   cover_image_url String?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  users           FilmOnUser[]
+}
+
+model FilmOnUser {
+  userId  String
+  filmId  String
+  user    User   @relation(fields: [userId], references: [id])
+  film    Film   @relation(fields: [filmId], references: [id])
+
+  @@id([userId, filmId])
 }

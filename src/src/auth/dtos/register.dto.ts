@@ -10,4 +10,10 @@ export class RegisterDto {
 
   @IsString()
   username: string;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
 }
