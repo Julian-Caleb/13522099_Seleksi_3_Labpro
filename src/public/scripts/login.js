@@ -12,9 +12,11 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
-  
+
       if (data.status === 'success') {
         // alert('Login successful!');
+        const token = data.data.token;
+        localStorage.setItem('token', token);
         window.location.href = '/index.html';
       } else {
         alert(`Error: ${data.message}`);

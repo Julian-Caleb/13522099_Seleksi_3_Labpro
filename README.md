@@ -21,6 +21,7 @@ Tech stack yang digunakan dalam seleksi 3 Labpro adalah sebagai berikut:
 2. NestJs 
 3. Docker 25.0.3
 4. Passport 
+5. Cloudflare R2
 
 ### List Endpoint
 

@@ -16,7 +16,7 @@ export class UsersController {
     }
 
     @Get('users/:id')
-    async usersId(@Headers('Authorization') header: string, @Param('id') id: string,) {
+    async userId(@Headers('Authorization') header: string, @Param('id') id: string,) {
       return this.usersService.users(header, id);
     }
 

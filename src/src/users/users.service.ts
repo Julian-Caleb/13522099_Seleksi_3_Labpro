@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -12,7 +12,7 @@ export class UsersService {
     async self(header: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Invalid token");
             }
             const token = header.split(' ')[1];
 
@@ -20,7 +20,7 @@ export class UsersService {
             const user = await this.prisma.user.findUnique({ where: { id: decoded.sub } });
         
             if (!user) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("User not found.");
             } 
 
             return {
@@ -35,7 +35,7 @@ export class UsersService {
         } catch (error) {
             return {
                 status: 'error',
-                message: 'Failed to retrieve user',
+                message: error.message,
                 data: null,
             };
         }
@@ -44,7 +44,7 @@ export class UsersService {
     async users(header: string, q?: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
-                throw new UnauthorizedException('Invalid token');
+                throw new UnauthorizedException('Invalid token.');
             }
 
             const users = await this.prisma.user.findMany({
@@ -62,7 +62,7 @@ export class UsersService {
             });
         
             if (!users) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Failed to retrieve users.");
             } 
 
             return {
@@ -74,16 +74,16 @@ export class UsersService {
         } catch (error) {
             return {
                 status: 'error',
-                message: 'Failed to retrieve users',
+                message: error.message,
                 data: [],
             };
         }
     }
 
-    async usersId(header: string, id: string) {
+    async userId(header: string, id: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Invalid token.");
             }
 
             const user = await this.prisma.user.findUnique(
@@ -98,7 +98,7 @@ export class UsersService {
             });
 
             if (!user) {
-                throw new UnauthorizedException();
+                throw new NotFoundException("Failed to retrieve user.");
             } 
         
             return {
@@ -110,7 +110,7 @@ export class UsersService {
         } catch (error) {
             return {
                 status: 'error',
-                message: 'Failed to retrieve user',
+                message: error.message,
                 data: null,
             };
         }
@@ -119,13 +119,13 @@ export class UsersService {
     async balance(header: string, increment: number, id: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Invalid token.");
             }
 
             const user = await this.prisma.user.findUnique({ where: { id } });
 
             if (!user) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Failed to retrieve user.");
             }
 
             const updatedUser = await this.prisma.user.update({
@@ -152,7 +152,7 @@ export class UsersService {
         } catch (error) {
             return {
                 status: 'error',
-                message: 'Failed to retrieve user',
+                message: error.message,
                 data: null,
             };
         }
@@ -161,13 +161,13 @@ export class UsersService {
     async delete(header: string, id: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Invalid token.");
             }
 
             const user = await this.prisma.user.findUnique({ where: { id } });
 
             if (!user) {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException("Failed to retrieve user.");
             }
 
             const deletedUser = await this.prisma.user.delete({
@@ -189,7 +189,7 @@ export class UsersService {
         } catch (error) {
             return {
                 status: 'error',
-                message: 'Failed to retrieve user',
+                message: error.message,
                 data: null,
             };
         }
