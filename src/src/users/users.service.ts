@@ -16,6 +16,31 @@ export class UsersService {
             }
             const token = header.split(' ')[1];
 
+            return {
+                status: 'success',
+                message: 'Admin retrieved successfully',
+                data: {
+                    username: 'admin',
+                    token,
+                },
+            };
+          
+        } catch (error) {
+            return {
+                status: 'error',
+                message: error.message,
+                data: null,
+            };
+        }
+    }
+
+    async selfUser(header: string) {
+        try {
+            if (!header || !header.startsWith('Bearer ')) {
+                throw new UnauthorizedException("Invalid token");
+            }
+            const token = header.split(' ')[1];
+
             const decoded = this.jwtService.verify(token);
             const user = await this.prisma.user.findUnique({ where: { id: decoded.sub } });
         
@@ -27,8 +52,9 @@ export class UsersService {
                 status: 'success',
                 message: 'User retrieved successfully',
                 data: {
-                username: user.username,
-                token,
+                    username: user.username,
+                    balance: user.balance,
+                    token,
                 },
             };
           
@@ -39,7 +65,7 @@ export class UsersService {
                 data: null,
             };
         }
-      }
+    }
 
     async users(header: string, q?: string) {
         try {

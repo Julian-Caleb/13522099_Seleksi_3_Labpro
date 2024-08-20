@@ -10,6 +10,11 @@ export class UsersController {
       return this.usersService.self(header);
     }
 
+    @Get('self-user')
+    async selfUser(@Headers('Authorization') header: string) {
+      return this.usersService.selfUser(header);
+    }
+
     @Get('users')
     async users(@Headers('Authorization') header: string, @Query('q') q?: string) {
       return this.usersService.users(header, q);
@@ -31,3 +36,4 @@ export class UsersController {
     }
 
 }
+

@@ -5,9 +5,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { JwtStrategy } from './strategies';
+import { AuthPageController } from './auth.page';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     PrismaModule,
     PassportModule,
     JwtModule.register({
@@ -15,6 +18,6 @@ import { JwtStrategy } from './strategies';
     }),
   ],
   providers: [AuthService, JwtStrategy],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthPageController],
 })
 export class AuthModule {}

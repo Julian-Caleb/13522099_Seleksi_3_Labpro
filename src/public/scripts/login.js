@@ -1,23 +1,22 @@
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const username = document.getElementById('username').value;
+    const usernameOrEmail = document.getElementById('usernameOrEmail').value;
     const password = document.getElementById('password').value;
-  
+
     try {
-      const response = await fetch('/login', {
+      const response = await fetch('/login-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ usernameOrEmail, password }),
       });
       const data = await response.json();
-
+  
       if (data.status === 'success') {
-        // alert('Login successful!');
         const token = data.data.token;
         localStorage.setItem('token', token);
-        window.location.href = '/index.html';
+        window.location.href = '/home-page';
       } else {
         alert(`Error: ${data.message}`);
       }

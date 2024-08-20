@@ -1,5 +1,4 @@
 document.getElementById('register-form').addEventListener('submit', async (event) => {
-    console.log("among us");
     event.preventDefault();
     const firstName = document.getElementById('first-name').value;
     const lastName = document.getElementById('last-name').value;
@@ -8,7 +7,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     const password = document.getElementById('password').value;
   
     try {
-      const response = await fetch('/register', {
+      const response = await fetch('/register-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,8 +17,9 @@ document.getElementById('register-form').addEventListener('submit', async (event
       const data = await response.json();
   
       if (data.status === 'success') {
-        // alert('Registration successful!');
-        window.location.href = '/index.html';
+        const token = data.data.token;
+        localStorage.setItem('token', token);
+        window.location.href = '/home-page';
       } else {
         alert(`Error: ${data.message}`);
       }
