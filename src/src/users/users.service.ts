@@ -189,13 +189,17 @@ export class UsersService {
             if (!header || !header.startsWith('Bearer ')) {
                 throw new UnauthorizedException("Invalid token.");
             }
-
+    
             const user = await this.prisma.user.findUnique({ where: { id } });
-
+    
             if (!user) {
                 throw new UnauthorizedException("Failed to retrieve user.");
             }
-
+    
+            await this.prisma.filmOnUser.deleteMany({
+                where: { userId: id },
+            });
+    
             const deletedUser = await this.prisma.user.delete({
                 where: { id },
                 select: {
@@ -203,15 +207,15 @@ export class UsersService {
                     username: true,
                     email: true,
                     balance: true,
-                  },
-            })
-
+                },
+            });
+    
             return {
                 status: 'success',
-                message: 'User deleted successfully',
+                message: 'User and related films deleted successfully',
                 data: deletedUser,
-            }
-
+            };
+    
         } catch (error) {
             return {
                 status: 'error',
@@ -220,5 +224,6 @@ export class UsersService {
             };
         }
     }
+    
 
 }

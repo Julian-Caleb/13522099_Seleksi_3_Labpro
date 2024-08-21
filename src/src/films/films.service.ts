@@ -341,41 +341,46 @@ export class FilmsService {
         }
       }
 
-    async deleteFilm(header: string, id: string) {
+      async deleteFilm(header: string, id: string) {
         try {
-          if (!header || !header.startsWith('Bearer ')) {
-            throw new UnauthorizedException("Invalid token.");
-          }
+            if (!header || !header.startsWith('Bearer ')) {
+                throw new UnauthorizedException("Invalid token.");
+            }
     
-          const existingFilm = await this.prisma.film.findUnique({ where: { id } });
-          if (!existingFilm) {
-            throw new NotFoundException("Film not found.");
-          }
+            const existingFilm = await this.prisma.film.findUnique({ where: { id } });
+            if (!existingFilm) {
+                throw new NotFoundException("Film not found.");
+            }
+
+            await this.prisma.filmOnUser.deleteMany({
+                where: { filmId: id },
+            });
     
-          if (existingFilm.video_url) {
-            await this.deleteFromS3(existingFilm.video_url);
-          }
+            if (existingFilm.video_url) {
+                await this.deleteFromS3(existingFilm.video_url);
+            }
     
-          if (existingFilm.cover_image_url) {
-            await this.deleteFromS3(existingFilm.cover_image_url);
-          }
+            if (existingFilm.cover_image_url) {
+                await this.deleteFromS3(existingFilm.cover_image_url);
+            }
+
+            await this.prisma.film.delete({ where: { id } });
     
-          await this.prisma.film.delete({ where: { id } });
-    
-          return {
-            status: 'success',
-            message: 'Film deleted successfully',
-            data: null,
-          };
+            return {
+                status: 'success',
+                message: 'Film and related users deleted successfully',
+                data: null,
+            };
     
         } catch (error) {
-          return {
-            status: 'error',
-            message: error.message,
-            data: null,
-          };
+            return {
+                status: 'error',
+                message: error.message,
+                data: null,
+            };
         }
       }
+    
 
     private async uploadToS3(file: Express.Multer.File): Promise<string> {
 
