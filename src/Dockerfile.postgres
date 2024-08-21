@@ -1,7 +1,0 @@
-FROM postgres:latest
-
-ENV POSTGRES_DB = film_catalogue
-ENV POSTGRES_USER = postgres
-ENV POSTGRES_PASSWORD = password
-
-EXPOSE 5432

@@ -9,11 +9,12 @@ services:
       POSTGRES_DB: film_catalogue
     ports:
       - "5432:5432"
-  backend:
+  nestjs:
     build: .
-    ports: 
+    container_name: film_catalogue_nestjs
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
       - "3000:3000"
     depends_on:
       - postgres
-    env_file:
-      - .env

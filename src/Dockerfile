@@ -1,16 +1,22 @@
-FROM node:20.11.1-alpine
+# Use the official Node.js image
+FROM node:18
 
-WORKDIR /app
+# Create and set the working directory
+WORKDIR /usr/src/app
 
+# Install dependencies
 COPY package*.json ./
+RUN npm install
 
-RUN npm cache clean --force
-RUN npm install --legacy-peer-deps
-
+# Copy the rest of the application code
 COPY . .
 
-RUN npx prisma generate
+# Build the NestJS application
+RUN npm run build
+RUN npx prisma migrate deploy
 
+# Expose the port the app runs on
 EXPOSE 3000
 
-CMD [  "npm", "run", "start:migrate:prod" ]
+# Command to run the application
+CMD ["npm", "run", "start:prod"]
