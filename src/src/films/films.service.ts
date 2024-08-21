@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FilmDto } from './dtos';
@@ -482,7 +482,48 @@ export class FilmsService {
           message: 'Films retrieved successfully',
           data: films,
       };
-  }
+    }
+
+    async getFilmVideo(header: string, id: string) {
+      try {
+        if (!header || !header.startsWith('Bearer ')) {
+          throw new UnauthorizedException("Invalid token.");
+        }
+
+        const token = header.split(' ')[1];
+
+        const decoded = this.jwtService.verify(token);
+        const user = await this.prisma.user.findUnique({ where: { id: decoded.sub } });
+
+        const filmOnUser = await this.prisma.filmOnUser.findUnique({
+          where: {
+            userId_filmId: {
+                userId: user.id,
+                filmId: id,
+            }
+        },
+        include: {
+            film: true, 
+        }
+        });
+
+        if (!filmOnUser) {
+          throw new ForbiddenException("You have not purchased this film.");
+        }
+
+        return {
+            status: 'success',
+            message: 'Film ready to watch',
+            data: {
+                videoUrl: filmOnUser.film.video_url,
+            },
+        };
+
+
+      } catch (error) {
+        throw new ExceptionsHandler();
+      }
+    }
   
 
 }

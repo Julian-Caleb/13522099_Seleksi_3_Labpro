@@ -43,15 +43,4 @@ export class AppPageController {
         return res.redirect('/login-page');
     }
 
-    @Post('films-btn-redirect')
-    films(@Res() res: Response) {
-        return res.redirect('/films-page');
-    }
-
-    @Post('my-list-btn-redirect')
-    myList(@Res() res: Response) {
-        return res.redirect('/my-list-page');
-    }
-
-
 }

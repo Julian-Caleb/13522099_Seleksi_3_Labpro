@@ -18,7 +18,7 @@ export class FilmsPageController {
         @Req() req: Request, 
         @Query('q') q?: string,
         @Query('page') page: string = '1',
-        @Query('limit') limit: string = '6'
+        @Query('limit') limit: string = '3'
     ) {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
@@ -84,7 +84,7 @@ export class FilmsPageController {
     
 
     @Post('back-home-btn-redirect')
-    films(@Res() res: Response) {
+    backHome(@Res() res: Response) {
         return res.redirect('/home-page');
     }
 
@@ -122,7 +122,7 @@ export class FilmsPageController {
         @Req() req: Request,
         @Query('q') q?: string,
         @Query('page') page: string = '1',
-        @Query('limit') limit: string = '6'
+        @Query('limit') limit: string = '3'
     ) {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
@@ -160,5 +160,40 @@ export class FilmsPageController {
             };
         }
     }
+
+    @Post('back-films-btn-redirect')
+    backFilms(@Res() res: Response) {
+        return res.redirect('/films-page');
+    }
+
+    @Get('films/watch/:id')
+    @Render('films/watch')
+    async watchFilm(
+        @Req() req: Request,
+        @Param('id') id: string
+    ) {
+        const token = req.cookies ? req.cookies['token'] : null;
+        const loggedIn = !!token;
+
+        if (loggedIn) {
+            const result = await this.filmService.getFilmVideo("Bearer " + token, id);
+
+            return {
+                layout: 'layout',
+                videoUrl: result.data.videoUrl,
+                filmId: id,
+            }
+        
+        } else {
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        }
+
+    }
+
+    @Post('back-film-detail-btn-redirect/:id')
+    backFilmDetail(@Res() res: Response, @Param('id') id: string) {
+        return res.redirect(`/film-detail-page/${id}`);
+    }
+
 
 }

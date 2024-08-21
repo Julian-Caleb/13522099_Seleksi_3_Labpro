@@ -1,4 +1,4 @@
-<div class="bg-black flex items-center justify-center h-screen">
+<div class="bg-black flex items-center justify-center min-h-screen">
     <div id="content" class="container mx-auto p-8">
         <h1 class="text-3xl font-bold mb-4 text-white">Welcome, <span id="username-display">{{username}}</span>!</h1>
         <h2 id="balance-display" class="text-xl font-bold mb-4 text-white">{{balance}}</h2>
@@ -16,17 +16,5 @@
             </button>
         </form>
         {{/if}}
-        
-        <form action="/films-btn-redirect" method="POST" class="inline">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Browse Films
-            </button>
-        </form>
-
-        <form action="/my-list-btn-redirect" method="POST" class="inline">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                My Films
-            </button>
-        </form>
     </div>
 </div>

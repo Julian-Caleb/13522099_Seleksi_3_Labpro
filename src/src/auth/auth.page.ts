@@ -12,7 +12,7 @@ export class AuthPageController {
     @Render('auth/register')
     registerPage() {
         return {
-            layout: 'layout',
+            layout: 'layoutNonPartial',
         };
     }
 
@@ -20,7 +20,7 @@ export class AuthPageController {
     @Render('auth/login')
     loginPage() {
         return {
-            layout: 'layout',
+            layout: 'layoutNonPartial',
         };
     }
 
