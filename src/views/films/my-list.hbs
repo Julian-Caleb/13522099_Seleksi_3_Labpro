@@ -1,7 +1,7 @@
 <div class="bg-black min-w-screen min-h-screen">
-    <h1 class="text-2xl font-bold mb-4 text-white">Films</h1>
+    <h1 class="text-2xl font-bold mb-4 text-white">My Films</h1>
 
-    <form method="GET" action="/films-page" class="mb-4">
+    <form method="GET" action="/my-list" class="mb-4">
         <input
             type="text"
             name="q"
@@ -25,13 +25,13 @@
 
     <div class="flex justify-center mt-4">
         {{#if (gt currentPage 1)}}
-            <a href="/films-page?q={{query}}&page={{subtract currentPage 1}}&limit=6" class="bg-blue-500 text-white py-2 px-4 rounded mr-2">Previous</a>
+            <a href="/my-list?q={{query}}&page={{subtract currentPage 1}}&limit=6" class="bg-blue-500 text-white py-2 px-4 rounded mr-2">Previous</a>
         {{/if}}
         {{#each (range 1 totalPages)}}
-            <a href="/films-page?q={{query}}&page={{this}}&limit=6" class="bg-gray-500 text-white py-2 px-4 rounded {{#if (eq ../currentPage this)}}bg-blue-700{{/if}}">{{this}}</a>
+            <a href="/my-list?q={{query}}&page={{this}}&limit=6" class="bg-gray-500 text-white py-2 px-4 rounded {{#if (eq ../currentPage this)}}bg-blue-700{{/if}}">{{this}}</a>
         {{/each}}
         {{#if (lt currentPage totalPages)}}
-            <a href="/films-page?q={{query}}&page={{add currentPage 1}}&limit=6" class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Next</a>
+            <a href="/my-list?q={{query}}&page={{add currentPage 1}}&limit=6" class="bg-blue-500 text-white py-2 px-4 rounded ml-2">Next</a>
         {{/if}}
     </div>
 
@@ -40,4 +40,5 @@
             Back
         </button>
     </form>
+    <script src="/scripts/films.js"></script>
 </div>

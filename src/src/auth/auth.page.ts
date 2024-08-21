@@ -1,5 +1,8 @@
-import { Controller, Get, Render } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Post, Render, Res } from "@nestjs/common";
 import { AuthService } from './auth.service'
+import { LoginUserDto } from "./dtos/login.user.dto";
+import { Response } from "express";
+import { RegisterDto } from "./dtos";
 
 @Controller()
 export class AuthPageController {
@@ -20,4 +23,27 @@ export class AuthPageController {
             layout: 'layout',
         };
     }
+
+    @Post('login-btn')
+    async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
+        const result = await this.authService.loginUser(loginUserDto);
+        if (result.status === 'success') {
+            res.cookie('token', result.data.token, { httpOnly: true });
+            return res.redirect('/home-page');
+        } else {
+            return res.status(HttpStatus.UNAUTHORIZED).json(result);
+        }
+    }
+
+    @Post('register-btn')
+    async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
+        const result = await this.authService.registerUser(registerDto);
+        if (result.status === 'success') {
+            res.cookie('token', result.data.token, { httpOnly: true });
+            return res.redirect('/home-page');
+        } else {
+            return res.status(HttpStatus.UNAUTHORIZED).json(result);
+        }
+    }
+
 }

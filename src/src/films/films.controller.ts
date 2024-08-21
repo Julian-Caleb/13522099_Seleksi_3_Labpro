@@ -22,19 +22,33 @@ export class FilmsController {
     }
 
     @Get('films')
-    async getFilms(
+    async films(
         @Headers('Authorization') header: string,
         @Query('q') q?: string
     ) {
         return this.filmService.films(header, q);
     }
 
+    @Get('public-films')
+    async publicFilms(
+        @Query('q') q?: string
+    ) {
+        return this.filmService.publicFilms(q);
+    }
+
     @Get('films/:id')
-    async getFilmById(
+    async filmId(
         @Headers('Authorization') header: string,
         @Param('id') id: string
     ) {
         return this.filmService.filmId(header, id);
+    }
+
+    @Get('films/:id')
+    async publicFilmId(
+        @Param('id') id: string
+    ) {
+        return this.filmService.publicFilmId(id);
     }
 
     @Put('films/:id')

@@ -5,6 +5,7 @@ import { FilmDto } from './dtos';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class FilmsService {
@@ -123,6 +124,49 @@ export class FilmsService {
         }
     }
 
+    async publicFilms(q?: string) {
+      try {
+          const films = await this.prisma.film.findMany({
+              where: q ? 
+              {
+                  OR: [
+                      { title: { contains: q, mode: 'insensitive' } },
+                      { director: { contains: q, mode: 'insensitive' } }
+                  ]
+              } : {},
+              select: {
+                  id: true,
+                  title: true,
+                  director: true,
+                  release_year: true,
+                  genre: true,
+                  price: true,
+                  duration: true,
+                  cover_image_url: true,
+                  created_at: true,
+                  updated_at: true,
+              }
+          });
+
+          if (!films) {
+              throw new NotFoundException('No films found');
+          }
+
+          return {
+              status: 'success',
+              message: 'Films retrieved successfully',
+              data: films,
+          };
+
+      } catch (error) {
+          return {
+              status: 'error',
+              message: 'Failed to retrieve films',
+              data: null,
+          };
+      }
+    }
+
     async filmId(header: string, id: string) {
         try {
             if (!header || !header.startsWith('Bearer ')) {
@@ -178,6 +222,58 @@ export class FilmsService {
             };
         }
     }
+
+    async publicFilmId(id: string) {
+      try {
+          const film = await this.prisma.film.findUnique({
+              where: { id },
+              select: {
+                  id: true,
+                  title: true,
+                  description: true,
+                  director: true,
+                  release_year: true,
+                  genre: true,
+                  price: true,
+                  duration: true,
+                  video_url: true,
+                  cover_image_url: true,
+                  created_at: true,
+                  updated_at: true,
+              }
+          });
+
+          if (!film) {
+              throw new NotFoundException('Film not found');
+          }
+
+          return {
+              status: 'success',
+              message: 'Film retrieved successfully',
+              data: {
+                  id: film.id,
+                  title: film.title,
+                  description: film.description,
+                  director: film.director,
+                  release_year: film.release_year,
+                  genre: film.genre,
+                  price: film.price,
+                  duration: film.duration,
+                  video_url: film.video_url,
+                  cover_image_url: film.cover_image_url,
+                  created_at: film.created_at.toISOString(),
+                  updated_at: film.updated_at.toISOString(),
+              },
+          };
+
+      } catch (error) {
+          return {
+              status: 'error',
+              message: 'Failed to retrieve film',
+              data: null,
+          };
+      }
+  }
 
     async updateFilm(header: string, film: FilmDto, video: Express.Multer.File | null, coverImage: Express.Multer.File | null, id: string) {
         try {
@@ -308,5 +404,85 @@ export class FilmsService {
     
         await this.s3Client.send(new DeleteObjectCommand(deleteParams));
       }
+
+    async processPayment(header: string, id: string) {
+      try {
+        if (!header || !header.startsWith('Bearer ')) {
+          throw new UnauthorizedException("Invalid token.");
+        }
+
+        const token = header.split(' ')[1];
+
+        const decoded = this.jwtService.verify(token);
+        const user = await this.prisma.user.findUnique({ where: { id: decoded.sub } });
+
+        const film = await this.prisma.film.findUnique({
+            where: { id: id },
+        });
+
+        if (!user || !film) {
+            throw new Error('User or Film not found');
+        }
+
+        if (user.balance >= film.price) {
+            await this.prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    balance: user.balance - film.price,
+                },
+            });
+
+            await this.prisma.filmOnUser.create({
+                data: {
+                    userId: user.id,
+                    filmId: id,
+                },
+            });
+
+            return  {
+              status: 'success',
+              message: 'Film bought successfully',
+              data: {
+                userId: user.id,
+                filmId: id,
+              },
+            };
+        } else {
+            return  {
+              status: 'success',
+              message: 'Failed to buy film',
+              data: null,
+            };;
+        }
+      } catch (error) {
+        throw new ExceptionsHandler();
+      }
+    }
+
+    async purchasedFilms(userId: string, query?: string) {
+      const filmOnUserRecords = await this.prisma.filmOnUser.findMany({
+          where: {
+              userId: userId,
+              film: {
+                  title: {
+                      contains: query || '', 
+                      mode: 'insensitive'
+                  }
+              }
+          },
+          include: {
+              film: true 
+          }
+      });
+  
+      const films = filmOnUserRecords.map(filmOnUser => filmOnUser.film);
+  
+      return {
+          status: 'success',
+          message: 'Films retrieved successfully',
+          data: films,
+      };
+  }
+  
 
 }
