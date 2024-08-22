@@ -3,11 +3,13 @@ import { AuthService } from './auth.service'
 import { LoginUserDto } from "./dtos/login.user.dto";
 import { Response } from "express";
 import { RegisterDto } from "./dtos";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class AuthPageController {
     constructor(private readonly authService: AuthService) {}
 
+    @ApiTags('Render')
     @Get('register-page')
     @Render('auth/register')
     registerPage() {
@@ -16,6 +18,7 @@ export class AuthPageController {
         };
     }
 
+    @ApiTags('Render')
     @Get('login-page')
     @Render('auth/login')
     loginPage() {
@@ -24,6 +27,7 @@ export class AuthPageController {
         };
     }
 
+    @ApiTags('Button')
     @Post('login-btn')
     async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
         const result = await this.authService.loginUser(loginUserDto);
@@ -35,6 +39,7 @@ export class AuthPageController {
         }
     }
 
+    @ApiTags('Button')
     @Post('register-btn')
     async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
         const result = await this.authService.registerUser(registerDto);

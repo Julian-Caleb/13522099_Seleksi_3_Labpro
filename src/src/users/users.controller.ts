@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Headers, Param, Post, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller()
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
