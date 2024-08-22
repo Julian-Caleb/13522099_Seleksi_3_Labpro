@@ -1,22 +1,18 @@
-# Use the official Node.js image
 FROM node:18
 
-# Create and set the working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
 
-# Build the NestJS application
 RUN npm run build
-RUN npx prisma migrate deploy
 
-# Expose the port the app runs on
+CMD ["npm", "run", "migrate"]
+
+CMD ["npx", "ts-node", "src/seed/seed.ts"]
+
 EXPOSE 3000
 
-# Command to run the application
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "start"]

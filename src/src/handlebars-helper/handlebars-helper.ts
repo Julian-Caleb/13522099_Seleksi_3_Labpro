@@ -27,4 +27,8 @@ export class HandlebarsHelpers {
         }
         return range;
     }
+
+    static not(value: any): boolean {
+        return !value;
+    }
 }

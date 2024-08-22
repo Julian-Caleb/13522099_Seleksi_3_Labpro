@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { FilmsService } from "./films.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class FilmsPageController {
@@ -12,6 +13,7 @@ export class FilmsPageController {
         private readonly jwtService: JwtService,
     ) {}
 
+    @ApiTags('Render')
     @Get('films-page')
     @Render('films/films')
     async renderFilmsPage(
@@ -49,6 +51,7 @@ export class FilmsPageController {
         };
     }
 
+    @ApiTags('Render')
     @Get('film-detail-page/:id')
     @Render('films/film-detail')
     async renderFilmDetailPage(
@@ -83,11 +86,13 @@ export class FilmsPageController {
     }
     
 
+    @ApiTags('Button')
     @Post('back-home-btn-redirect')
     backHome(@Res() res: Response) {
         return res.redirect('/home-page');
     }
 
+    @ApiTags('Button')
     @Post('buy-film-btn/:id')
     async buyFilm(
         @Req() req: Request,
@@ -116,6 +121,7 @@ export class FilmsPageController {
 
     }
 
+    @ApiTags('Render')
     @Get('my-list-page')
     @Render('films/my-list')
     async renderMyList(
@@ -161,11 +167,13 @@ export class FilmsPageController {
         }
     }
 
+    @ApiTags('Button')
     @Post('back-films-btn-redirect')
     backFilms(@Res() res: Response) {
         return res.redirect('/films-page');
     }
 
+    @ApiTags('Render')
     @Get('films/watch/:id')
     @Render('films/watch')
     async watchFilm(
@@ -190,10 +198,16 @@ export class FilmsPageController {
 
     }
 
+    @ApiTags('Button')
     @Post('back-film-detail-btn-redirect/:id')
     backFilmDetail(@Res() res: Response, @Param('id') id: string) {
         return res.redirect(`/film-detail-page/${id}`);
     }
 
+    @ApiTags('Button')
+    @Post('back-my-list-btn-redirect')
+    backMyList(@Res() res: Response) {
+        return res.redirect(`/my-list-page`);
+    }
 
 }

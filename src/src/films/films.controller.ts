@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, Headers, Param, Post, Put, Query, Upload
 import { FilmsService } from "./films.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { FilmDto } from "./dtos";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Films')
 @Controller()
 export class FilmsController {
     constructor(private readonly filmService: FilmsService) {}
