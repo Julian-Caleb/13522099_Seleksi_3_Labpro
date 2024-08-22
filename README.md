@@ -79,7 +79,8 @@ Endpoint dalam seleksi 3 Labpro adalah sebagai berikut:
 27. POST /back-home-btn-redirect: Endpoint untuk kembali ke home.
 28. POST /buy-film-btn/{id}: Endpoint untuk membeli sebuah film.
 29. POST /back-films-btn-redirect: Endpoint untuk kembali ke halaman daftar film.
-30. POST /back-film-detail-btn-redirect/{id}: Endpoint untuk kembali ke halaman detail sebuah film
+30. POST /back-film-detail-btn-redirect/{id}: Endpoint untuk kembali ke halaman detail sebuah film.
+31. POST /back-my-list-btn-redirect: Endpoint untuk kembali ke halaman daftar film yang sudah dibeli.
 Untuk lebih lengkap, dapat menjalankan localhost:3000/api (setelah program dijalankan) untuk melihat dokumentasi API pada Swagger.
 
 ### Spesifikasi yang dikerjakan

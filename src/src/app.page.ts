@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Render, Req, Res } from "@nestjs/common";
+import { Controller, Get, Post, Render, Req, Res, Body } from "@nestjs/common";
 import { Request, Response } from "express";
 import { UsersService } from "./users/users.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -10,11 +10,10 @@ export class AppPageController {
     @ApiTags('Render')
     @Get('home-page')
     @Render('home')
-    async homePage(
-        @Req() req: Request, 
-    ) {
+    async homePage(@Req() req: Request) {
         const token = req.cookies['token'];
         const loggedIn = !!token;
+        const menuOpen = req.cookies['menuOpen'] === 'true';
 
         if (loggedIn) {
             const result = await this.usersService.selfUser("Bearer " + token);
@@ -23,14 +22,16 @@ export class AppPageController {
                 username: result.data.username,
                 balance: 'Your balance is ' + result.data.balance + '.',
                 loggedIn,
-            }
+                menuOpen,
+            };
         } else {
             return {
                 layout: 'layout',
                 username: 'Guest',
                 balance: null,
                 loggedIn,
-            }
+                menuOpen,
+            };
         }
     }
 
@@ -47,4 +48,10 @@ export class AppPageController {
         return res.redirect('/login-page');
     }
 
+    @ApiTags('Button')
+    @Post('toggle-menu')
+    toggleMenu(@Req() req: Request, @Res() res: Response, @Body('menuOpen') menuOpen: boolean) {
+        res.cookie('menuOpen', menuOpen);
+        return res.sendStatus(200);
+    }
 }

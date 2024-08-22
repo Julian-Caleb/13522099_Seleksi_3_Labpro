@@ -9,12 +9,49 @@ services:
       POSTGRES_DB: film_catalogue
     ports:
       - "5432:5432"
-  nestjs:
-    build: .
-    container_name: film_catalogue_nestjs
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: film_catalogue_migration
+    command: npm run migrate
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+  seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: film_catalogue_seeder
+    command: npx ts-node src/seed/seed.ts
+    depends_on:
+      - migration
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+    volumes:
+      - .:/app
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: film_catalogue_backend
+    environment:
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/film_catalogue?schema=public"
     ports:
       - "3000:3000"
     depends_on:
       - postgres
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:

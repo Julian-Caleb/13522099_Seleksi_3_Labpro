@@ -17,7 +17,7 @@ export class AuthPageController {
             layout: 'layoutNonPartial',
         };
     }
-
+    
     @ApiTags('Render')
     @Get('login-page')
     @Render('auth/login')

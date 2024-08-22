@@ -204,5 +204,10 @@ export class FilmsPageController {
         return res.redirect(`/film-detail-page/${id}`);
     }
 
+    @ApiTags('Button')
+    @Post('back-my-list-btn-redirect')
+    backMyList(@Res() res: Response) {
+        return res.redirect(`/my-list-page`);
+    }
 
 }
