@@ -26,8 +26,6 @@ class Seeder {
       this.bucketName = process.env.AWS_S3_BUCKET_NAME;
   }
 
-  // return `https://${this.bucketName}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileName}`;
-
   private async createUser(data: {
     email: string;
     username: string;

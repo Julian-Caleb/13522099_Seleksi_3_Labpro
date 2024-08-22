@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as exphbs from 'express-handlebars';
 import * as cookieParser from 'cookie-parser';
 import { HandlebarsHelpers } from './handlebars-helper/handlebars-helper';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,6 +17,14 @@ async function bootstrap() {
     transform: true,
     transformOptions: { enableImplicitConversion: true },
   }));
+
+  const config = new DocumentBuilder()
+    .setTitle('Film Catalogue\'s API')
+    .setDescription('List of all API Endpoints made for the Film Catalogue app.')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
@@ -33,6 +42,7 @@ async function bootstrap() {
         add: HandlebarsHelpers.add,
         subtract: HandlebarsHelpers.subtract,
         range: HandlebarsHelpers.range,
+        not: HandlebarsHelpers.not,
       },
     }),
   );
